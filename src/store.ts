@@ -1,19 +1,26 @@
-import {Observable, BehaviorSubject} from 'rxjs';
+import {BehaviorSubject, Observable} from 'rxjs';
+import {distinctUntilChanged, map} from "rxjs/operators";
 
 export class Store<T> {
-    state$: Observable<T>;
+
     private _state$: BehaviorSubject<T>;
 
-    protected constructor (initialState: T) {
+    protected constructor(initialState: T) {
         this._state$ = new BehaviorSubject(initialState);
-        this.state$ = this._state$.asObservable();
     }
 
-    get state (): T {
+    public get state(): T {
         return this._state$.getValue();
     }
 
-    setState (nextState: T): void {
+    public set state(nextState: T) {
         this._state$.next(nextState);
+    }
+
+    public select<S>(selectFn: (state: T) => S): Observable<S> {
+        return this._state$.pipe(
+            map(selectFn),
+            distinctUntilChanged()
+        );
     }
 }
