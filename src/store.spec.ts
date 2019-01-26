@@ -6,9 +6,7 @@ class TestState {
 
 class TestStore extends Store<TestState> {
     constructor() {
-        super({
-            value: 'initial value',
-        });
+        super(new TestState());
     }
 
     updateState(nextState: TestState): void {
